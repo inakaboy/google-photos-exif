@@ -12,7 +12,11 @@ export const CONFIG: Config = {
     { extension: '.mov',  supportsExif: true },
     { extension: '.mp4',  supportsExif: false },
     { extension: '.png',  supportsExif: false },
-    { extension: '.webp',  supportsExif: false },    
+    { extension: '.webp',  supportsExif: false },
+  ],
+  localizedEditedSuffixes: [
+    "edited", // English
+    // "editat", // Catalan -- add yours here if your Google Photos was localized to a different language
   ],
 };
 
