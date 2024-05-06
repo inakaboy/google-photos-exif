@@ -28,9 +28,18 @@ export function getCompanionJsonPathForMediaFile(mediaFilePath: string): string|
   // We can use a regex to look for this edge case and add that to the potential JSON filenames to look out for
   const nameWithCounterMatch = mediaFileNameWithoutExtension.match(/(?<name>.*)(?<counter>\(\d+\))$/);
   if (nameWithCounterMatch) {
-    const name = nameWithCounterMatch?.groups?.['name'];
+    // We may have some edited files here too
+    const name = nameWithCounterMatch?.groups?.['name'].replace(/[-]edited$/i, '');
     const counter = nameWithCounterMatch?.groups?.['counter'];
     potentialJsonFileNames.push(`${name}${mediaFileExtension}${counter}.json`);
+    if (mediaFileExtension === '.MP4' || mediaFileExtension === '.mp4') {
+      potentialJsonFileNames.push(`${name}.JPG${counter}.json`);
+      potentialJsonFileNames.push(`${name}.jpg${counter}.json`);
+      potentialJsonFileNames.push(`${name}.jpeg${counter}.json`);
+      potentialJsonFileNames.push(`${name}.heic${counter}.json`);
+    }
+    // A reasonable approximation may also be to remove the counter
+    //potentialJsonFileNames.push(`${name}${mediaFileExtension}.json`);
   }
 
   // Sometimes the media filename ends with extra dash (eg. filename_n-.jpg + filename_n.json)
@@ -46,6 +55,24 @@ export function getCompanionJsonPathForMediaFile(mediaFilePath: string): string|
     // We need to remove that extra char at the end
     potentialJsonFileNames.push(`${mediaFileNameWithoutExtension.slice(0, -1)}.json`);
   }
+
+  // Edge case where google/iOS creates a thumbnail as a JPG for an MP4 and saves it in a json sidecar possible for iOS Live Photos
+  if (mediaFileExtension === '.MP4' || mediaFileExtension === '.mp4') {
+    potentialJsonFileNames.push(`${mediaFileNameWithoutExtension}.JPG.json`);
+    potentialJsonFileNames.push(`${mediaFileNameWithoutExtension}.jpg.json`);
+    potentialJsonFileNames.push(`${mediaFileNameWithoutExtension}.jpeg.json`);
+    potentialJsonFileNames.push(`${mediaFileNameWithoutExtension}.heic.json`);
+  }
+
+  // It seems like the length of json file names is capped at 47
+  if (mediaFileNameWithoutExtension.length > 46) {
+    potentialJsonFileNames.push(`${mediaFileNameWithoutExtension.slice(0,46)}.json`)
+  }
+
+  // Bizarre rules with the lowest priority. There isn't a good way to detect these since they ar additions to the 
+  // companion file so we will just always add them at the end.
+  potentialJsonFileNames.push(`${mediaFileNameWithoutExtension}.j.json`)
+  potentialJsonFileNames.push(`${mediaFileNameWithoutExtension}.jp.json`)
 
   // Now look to see if we have a JSON file in the same directory as the image for any of the potential JSON file names
   // that we identified earlier

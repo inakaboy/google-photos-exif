@@ -135,6 +135,11 @@ class GooglePhotosExif extends Command {
         this.log (`    copying ${fi.fileName} to the errors directory due to missing JSON sidecar.`);
         copyWithJsonSidecar (fi, directories.error);
       }
+      else if (!fi.jsonFileHasSize) {
+        totalMissingJson++;
+        this.log (`    copying ${fi.fileName} to the errors directory due to empty JSON sidecar.`);
+        copyWithJsonSidecar (fi, directories.error);
+      }
     }
     this.log (`--- ${totalFilesCount} total files, ${mediaFiles.length} supported media files, of which ${totalMissingJson} media files' JSON sidecar could not be located. ---`);
 

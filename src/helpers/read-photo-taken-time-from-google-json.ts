@@ -5,7 +5,7 @@ import { FileInfo } from '../models/file-info'
 const { readFile } = fspromises;
 
 export async function readPhotoTakenTimeFromGoogleJson(mediaFile: FileInfo): Promise<string|null> {
-  if (!mediaFile.jsonFilePath || !mediaFile.jsonFileExists) {
+  if (!mediaFile.jsonFilePath || !mediaFile.jsonFileExists || !mediaFile.jsonFileHasSize) {
     return null;
   }
 

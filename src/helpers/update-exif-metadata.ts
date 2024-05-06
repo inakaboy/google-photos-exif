@@ -21,7 +21,7 @@ export async function updateExifMetadata(fileInfo: FileInfo, timeTaken: string, 
 
   } catch (error) {
     await copyFile(fileInfo.outputFilePath,  resolve(errorDir, fileInfo.fileName));
-    if (fileInfo.jsonFileExists && fileInfo.jsonFileName && fileInfo.jsonFilePath) {
+    if (fileInfo.jsonFileExists && fileInfo.jsonFileHasSize && fileInfo.jsonFileName && fileInfo.jsonFilePath) {
       await copyFile(fileInfo.jsonFilePath, resolve(errorDir, fileInfo.jsonFileName));
     }
   }

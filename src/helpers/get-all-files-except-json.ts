@@ -1,4 +1,4 @@
-import { existsSync } from 'fs';
+import { existsSync, statSync } from 'fs';
 import { basename, extname, resolve } from 'path';
 import { CONFIG } from '../config';
 import { FileInfo } from '../models/file-info';
@@ -33,6 +33,7 @@ export async function getAllFilesExceptJson(inputDir: string, outputDir: string)
     const jsonFilePath = getCompanionJsonPathForMediaFile(filePath);   // intentionally not including a check for isMediaFile here because some unsupported files may nevertheless contain JSON sidecars
     const jsonFileName = jsonFilePath ? basename(jsonFilePath) : null;
     const jsonFileExists = jsonFilePath ? existsSync(jsonFilePath) : false;
+    const jsonFileHasSize = jsonFilePath && jsonFileExists ? statSync(jsonFilePath).size !== 0: false;
     
     const outputFileName = isMediaFile ? generateUniqueOutputFileName(filePath, allUsedOutputFilesLowerCased) : null;
     const outputFilePath = isMediaFile ? resolve(outputDir, <string>outputFileName) : null;
@@ -47,6 +48,7 @@ export async function getAllFilesExceptJson(inputDir: string, outputDir: string)
       jsonFilePath,
       jsonFileName,
       jsonFileExists,
+      jsonFileHasSize,
       outputFileName,
       outputFilePath,
     });

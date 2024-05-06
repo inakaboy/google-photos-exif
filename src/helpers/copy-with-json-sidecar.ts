@@ -12,7 +12,7 @@ export async function copyWithJsonSidecar(fileInfo: FileInfo, destDir: string): 
   const destName = fileInfo.outputFileName ? fileInfo.outputFileName : fileInfo.fileName;  // use the outputFileName if set or fall back to the original fileName otherwise
 
   await copyFile(fileInfo.filePath, resolve(destDir, destName));
-  if (fileInfo.jsonFileExists && fileInfo.jsonFileName && fileInfo.jsonFilePath) {
+  if (fileInfo.jsonFileExists && fileInfo.jsonFileHasSize && fileInfo.jsonFileName && fileInfo.jsonFilePath) {
     await copyFile(fileInfo.jsonFilePath, resolve(destDir, fileInfo.jsonFileName));
   }
 
