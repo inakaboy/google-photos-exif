@@ -1,5 +1,6 @@
 import { existsSync } from "fs"
 import { basename, dirname, extname, resolve } from 'path'
+import { CONFIG } from '../config'
 
 export function getCompanionJsonPathForMediaFile(mediaFilePath: string): string|null {
   const directoryPath = dirname(mediaFilePath);
@@ -9,7 +10,8 @@ export function getCompanionJsonPathForMediaFile(mediaFilePath: string): string|
   // Sometimes (if the photo has been edited inside Google Photos) we get files with a `-edited` suffix
   // These images don't have their own .json sidecars - for these we'd want to use the JSON sidecar for the original image
   // so we can ignore the "-edited" suffix if there is one
-  mediaFileNameWithoutExtension = mediaFileNameWithoutExtension.replace(/[-]edited$/i, '');
+  const suffixRegex = new RegExp(`-(${CONFIG.localizedEditedSuffixes.join('|')})$`);
+  mediaFileNameWithoutExtension = mediaFileNameWithoutExtension.replace(suffixRegex, '');
 
   // The naming pattern for the JSON sidecar files provided by Google Takeout seem to be inconsistent. For `foo.jpg`,
   // the JSON file is sometimes `foo.json` but sometimes it's `foo.jpg.json`. Here we start building up a list of potential
